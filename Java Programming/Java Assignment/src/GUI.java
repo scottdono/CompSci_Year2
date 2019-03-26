@@ -2,8 +2,7 @@
 import java.awt.BorderLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.io.FileNotFoundException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,21 +11,18 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-import java.util.Random;
-
 
 @SuppressWarnings("serial")
-public class GUI extends JFrame implements ActionListener, FocusListener
+public class GUI extends JFrame implements ActionListener
 {
 	private JButton search;
-	private JButton generate;
 	private JLabel instruction;
 	private JTextField textBox;
-	private Random Rand;
-	private int randNum;
-	private int guesses=0;
-
-	 
+	
+	//public static String FILENAME = "C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\src\\test.txt";
+	
+	TestFileIO Test = new TestFileIO();
+	
 	// Constructor
   
 	public GUI ()
@@ -36,10 +32,9 @@ public class GUI extends JFrame implements ActionListener, FocusListener
 		setLayout(new BorderLayout());
 		
 	
-		instruction = new JLabel("Then make a guess..");
-		generate = new JButton("Generate the random number");
-		textBox = new JTextField("  Enter your guess ");
-		search = new JButton("Check your guess");
+		instruction = new JLabel("Please enter a string to search for...");
+		textBox = new JTextField("",20);
+		search = new JButton("Search");
 
 		
 		//create a section of screen that will hold some GUI components
@@ -48,12 +43,9 @@ public class GUI extends JFrame implements ActionListener, FocusListener
 		JPanel southPanel = new JPanel();	
 		
 		search.addActionListener(this);
-		generate.addActionListener(this);
-
 		
 		//add the label/button we created to the panel
-		northPanel.add(generate);
-		mainPanel.add(instruction);
+		northPanel.add(instruction);
 		mainPanel.add(textBox);
 		mainPanel.add(search);
 		
@@ -64,7 +56,7 @@ public class GUI extends JFrame implements ActionListener, FocusListener
 		add(southPanel, BorderLayout.SOUTH);
 		
 		//set the location of the screen
-		setLocation(200,200);
+		setLocation(650,250);
 		
 		//Define the size of the frame
 		setSize(500,500);
@@ -79,51 +71,24 @@ public class GUI extends JFrame implements ActionListener, FocusListener
 	
 	public void actionPerformed(ActionEvent arg0) 
 	{
-		int input;
+		TestFileIO Test = new TestFileIO();
 		
 		if(arg0.getSource() == search)
 		{
-			
-			guesses++;
-			input = Integer.parseInt(textBox.getText());
-			if(input<randNum)
+			String input = textBox.getText();
+			input = input.toLowerCase();
+			try 
 			{
+				Test.parseFile("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\src\\ClassicBooks.txt", input);
+			} 
+			catch (FileNotFoundException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			/*
 				JOptionPane.showMessageDialog(null, "You're guess of "+input+" is too low. Guess again.");
-			}
-			if(input>randNum)
-			{
-				JOptionPane.showMessageDialog(null, "You're guess of "+input+" is too high. Guess again.");
-			}
-			if(input==randNum)
-			{
-				JOptionPane.showMessageDialog(null, "Correct! It took you " +guesses+ " guesses.");
-			}
-			
+			*/
 		}
-		else if(arg0.getSource() == generate)
-		{
-			Rand = new Random();
-			randNum = Rand.nextInt(100);
-			randNum += 1;
-			System.out.println(randNum);
-		}
-		
 	}
-@Override
-public void focusGained(FocusEvent arg0) 
-{
-	if(arg0.getSource() == textBox)
-	{
-		     textBox.setText("");
-	}
-
-	
-}
-@Override
-public void focusLost(FocusEvent arg0) 
-{
-	// TODO Auto-generated method stub
-	
-}
-
 }
