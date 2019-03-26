@@ -21,7 +21,8 @@ public class Control
 
 	public static void main(String[] args) throws FileNotFoundException
     {
-        GUI test = new GUI();
+       // GUI test = new GUI();
+		GUI test = new GUI();
         
     }
 
