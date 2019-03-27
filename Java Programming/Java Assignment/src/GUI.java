@@ -24,49 +24,63 @@ import javax.swing.JTextField;
 @SuppressWarnings("serial")
 public class GUI extends JFrame implements ActionListener
 {
+	
+	//Declaring attributes.
 	private JButton search;
 	private JLabel instruction;
 	private JTextField textBox;
 	private JMenu menu;
+	private JMenu help;
+	private JMenu exit;
 	private JMenu submenu;
 	private JMenuBar menuBar;
 	private JMenuItem menuItem;
 	private JCheckBoxMenuItem cbMenuItem;
 	
-	//public static String FILENAME = "C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\src\\test.txt";
-	
-	TestFileIO Test = new TestFileIO();
-	
-	// Constructor
-  
+	// Constructor method.
 	public GUI ()
 	{
-		super("My GUI");
-		// sets the screen layout
+		//Title of the window
+		super("Search Engine");
+		
+		//Sets the screen layout scheme.
 		setLayout(new BorderLayout());
 		
-	
+		//Instantiating elements on the screen.
 		instruction = new JLabel("Please enter a string to search for...");
 		textBox = new JTextField("",20);
 		search = new JButton("Search");
 		
 		//-----------------MENU BAR STUFF---------------------------
 		menuBar = new JMenuBar();
-		menu = new JMenu("Menu");
+		menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_A);
-		menu.getAccessibleContext().setAccessibleDescription("The only menu in this program that has menu items");
+		menu.getAccessibleContext().setAccessibleDescription("File chooser.");
 		menuBar.add(menu);
+		help = new JMenu("Help");
+		help.setMnemonic(KeyEvent.VK_A);
+		help.getAccessibleContext().setAccessibleDescription("Access info about the application.");
+		menuBar.add(help);
+		exit = new JMenu("Exit");
+		exit.setMnemonic(KeyEvent.VK_A);
+		exit.getAccessibleContext().setAccessibleDescription("Exit the program.");
+		menuBar.add(exit);
 
-		menuItem = new JMenuItem("Select which files to include.", KeyEvent.VK_T);
+		menuItem = new JMenuItem("Open...", KeyEvent.VK_T);
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
-		menuItem.getAccessibleContext().setAccessibleDescription("Select which files to include.");
+		menuItem.getAccessibleContext().setAccessibleDescription("Open...");
+		menu.add(menuItem);
+		menuItem = new JMenuItem("Save...", KeyEvent.VK_T);
+		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_1, ActionEvent.ALT_MASK));
+		menuItem.getAccessibleContext().setAccessibleDescription("Save...");
 		menu.add(menuItem);
 		
 		menu.addSeparator();
-		submenu = new JMenu("A submenu");
+		
+		submenu = new JMenu("Files to include...");
 		submenu.setMnemonic(KeyEvent.VK_S);
 	
-		menuItem = new JMenuItem("An item in the submenu");
+		menuItem = new JMenuItem("Choose a new file...");
 		menuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_2, ActionEvent.ALT_MASK));
 		submenu.add(menuItem);
 		
@@ -75,39 +89,39 @@ public class GUI extends JFrame implements ActionListener
 		submenu.add(cbMenuItem);
 		menu.add(submenu);
 	
-		cbMenuItem = new JCheckBoxMenuItem("whatever.txt");
+		cbMenuItem = new JCheckBoxMenuItem("Catalogue.txt");
 		cbMenuItem.setMnemonic(KeyEvent.VK_H);
 		submenu.add(cbMenuItem);
 		menu.add(submenu);
+		
+		this.setJMenuBar(menuBar);
 	
 		//-----------------------------------------------------------------
 		
-		//create a section of screen that will hold some GUI components
+		//Create a section of screen that will hold some GUI components
 		JPanel mainPanel = new JPanel();
 		JPanel northPanel = new JPanel();
 		JPanel southPanel = new JPanel();
-		//JFrame frame = new JFrame();
 		
 		search.addActionListener(this);
 		
-		//add the label/button we created to the panel
+		//Add the label/button we created to the panel
 		mainPanel.add(instruction);
 		mainPanel.add(textBox);
 		mainPanel.add(search);
-		northPanel.add(menuBar);
 		
-		//add the panel to the screen
+		//Add the panel to the screen
 		add(mainPanel, BorderLayout.CENTER);
 		add(northPanel, BorderLayout.NORTH);
 		add(southPanel, BorderLayout.SOUTH);
 		
-		//set the location of the screen
+		//Set the location of the window to the middle of the screen.
 		setLocation(650,250);
 		
-		//Define the size of the frame
+		//Define the size of the window.
 		setSize(500,500);
 		
-		//Make the screen appear
+		//Make the screen appear.
 		setVisible(true);
 		
 	}
