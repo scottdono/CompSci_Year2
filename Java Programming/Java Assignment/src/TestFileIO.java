@@ -12,6 +12,7 @@ public class TestFileIO
 	
 	public void parseFile(String FILENAME,String searchStr) throws FileNotFoundException
 	{
+		System.out.println(FILENAME);
         Scanner scan = new Scanner(new File(FILENAME));
         while(scan.hasNext())
         {
