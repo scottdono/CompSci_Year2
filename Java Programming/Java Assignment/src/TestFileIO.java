@@ -14,14 +14,17 @@ public class TestFileIO
 	{
 		System.out.println(FILENAME);
         Scanner scan = new Scanner(new File(FILENAME));
+        int counter = 0;
         while(scan.hasNext())
         {
             String line = scan.nextLine().toLowerCase().toString();
             if(line.contains(searchStr))
             {
-                System.out.println(line);
+            	counter++;
+                System.out.println(line+"\n");
             }
         }
+        System.out.println("The string was found on "+counter+" lines.");
     }
 
 

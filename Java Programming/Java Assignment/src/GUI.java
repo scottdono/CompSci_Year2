@@ -1,20 +1,14 @@
 import java.awt.BorderLayout;
 import java.awt.Desktop;
-import java.awt.Frame;
 import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
-import javax.swing.Box;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.KeyStroke;
 import javax.swing.filechooser.FileNameExtensionFilter;
-
 import com.sun.glass.events.KeyEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
@@ -22,7 +16,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -50,6 +43,9 @@ public class GUI extends JFrame implements ActionListener
 	private JMenuItem end;
 	private JCheckBoxMenuItem cbMenuItem;
 	
+	private String directory;
+	private String FILENAME;
+	
 	// Constructor method.
 	public GUI ()
 	{
@@ -64,7 +60,9 @@ public class GUI extends JFrame implements ActionListener
 		textBox = new JTextField("",20);
 		search = new JButton("Search");
 		
-		//-----------------MENU BAR STUFF---------------------------
+/**********************************************************
+ Menu Bar
+**********************************************************/	
 		menuBar = new JMenuBar();
 		menu = new JMenu("File");
 		menu.setMnemonic(KeyEvent.VK_A);
@@ -99,8 +97,10 @@ public class GUI extends JFrame implements ActionListener
 		submenu.setMnemonic(KeyEvent.VK_S);
 		
 		this.setJMenuBar(menuBar);
-	
-		//-----------------------------------------------------------------
+		
+/**********************************************************
+ Adding setting size, panel location, etc.
+**********************************************************/	
 		
 		//Create a section of screen that will hold some GUI components
 		JPanel mainPanel = new JPanel();
@@ -137,42 +137,63 @@ public class GUI extends JFrame implements ActionListener
 	//Method to add files that you can tick off.
 	public void newfiles(String FILENAME)
 	{
-		cbMenuItem = new JCheckBoxMenuItem(FILENAME);
+		//"true" sets the boxes to be checked by default.
+		cbMenuItem = new JCheckBoxMenuItem(FILENAME, true);
 		cbMenuItem.setMnemonic(KeyEvent.VK_C);
 		submenu.add(cbMenuItem);
 		menu.add(submenu);
 	}
+	
+	public void openFile(String directory, String FILENAME)
+	{
+		final JFileChooser fc = new JFileChooser();
+		//This adds a filter to the file chooser so that only text files can be selected.
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+		fc.setFileFilter(filter);
+		
+		int returnVal = fc.showOpenDialog(this);
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) 
+        {
+            File file = fc.getSelectedFile();
+            setDirectory(file.getAbsolutePath());
+            System.out.println(file.getAbsolutePath());
+            System.out.println(getDirectory());
+            
+            //call method to add the new file to the list.
+            FILENAME = file.getName();
+            newfiles(FILENAME);
+        } 
+	}
+	
+	public void searchFile(String directory)
+	{
+		TestFileIO Test = new TestFileIO();
+		System.out.println(getDirectory());
+		String input = textBox.getText();
+		input = input.toLowerCase();
+		try 
+		{
+			Test.parseFile(getDirectory(), input);
+		} 
+		catch (FileNotFoundException e) 
+		{
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
 /**********************************************************
  Event Programming
 **********************************************************/	
 	
 	public void actionPerformed(ActionEvent arg0) 
 	{
-		TestFileIO Test = new TestFileIO();
-		String direct = null;
-		String FILENAME;
-		
 		
 		//This lets the user find files on their system to be searched.
 		if(arg0.getSource() == open)
 		{
-			final JFileChooser fc = new JFileChooser();
-			//This adds a filter to the file chooser so that only text files can be selected.
-			FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
-			fc.setFileFilter(filter);
-			
-			int returnVal = fc.showOpenDialog(this);
-
-	        if (returnVal == JFileChooser.APPROVE_OPTION) 
-	        {
-	            File file = fc.getSelectedFile();
-	            direct = file.getAbsolutePath();
-	            //System.out.println(direct);
-	            
-	            //call method to add the new file to the list.
-	            FILENAME = file.getName();
-	            newfiles(FILENAME);
-	        } 
+			openFile(getDirectory(), FILENAME);
 		}
 		
 		//This allows you to terminate the program during runtime from within the GUI.
@@ -214,17 +235,19 @@ public class GUI extends JFrame implements ActionListener
 		//Calls the searching methods to find certain text in a file(s).
 		if(arg0.getSource() == search)
 		{
-			String input = textBox.getText();
-			input = input.toLowerCase();
-			try 
-			{
-				Test.parseFile(direct, input);
-			} 
-			catch (FileNotFoundException e) 
-			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			searchFile(getDirectory());
 		}
 	}
+
+/**********************************************************
+ Getters/Setters
+**********************************************************/
+	
+public String getDirectory() {
+	return directory;
+}
+
+public void setDirectory(String directory) {
+	this.directory = directory;
+}
 }
