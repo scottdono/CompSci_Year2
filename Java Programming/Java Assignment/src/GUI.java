@@ -16,6 +16,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -42,9 +45,16 @@ public class GUI extends JFrame implements ActionListener
 	private JMenuItem link;
 	private JMenuItem end;
 	private JCheckBoxMenuItem cbMenuItem;
+	private JLabel output;
 	
+	private String results;
 	private String directory;
 	private String FILENAME;
+	private int fileCount = 0;
+	//Instantiating the file class
+	TestFileIO Test = new TestFileIO();
+	List<String> files = new ArrayList<String>();
+	
 	
 	// Constructor method.
 	public GUI ()
@@ -59,6 +69,7 @@ public class GUI extends JFrame implements ActionListener
 		instruction = new JLabel("Please enter a string to search for...");
 		textBox = new JTextField("",20);
 		search = new JButton("Search");
+		output = new JLabel(results);
 		
 /**********************************************************
  Menu Bar
@@ -112,11 +123,14 @@ public class GUI extends JFrame implements ActionListener
 		link.addActionListener(this);
 		end.addActionListener(this);
 		about.addActionListener(this);
+		textBox.addActionListener(this);
+		cbMenuItem.addActionListener(this);
 		
 		//Add the label/button we created to the panel
 		mainPanel.add(instruction);
 		mainPanel.add(textBox);
 		mainPanel.add(search);
+		southPanel.add(output);
 		
 		//Add the panel to the screen
 		add(mainPanel, BorderLayout.CENTER);
@@ -132,6 +146,12 @@ public class GUI extends JFrame implements ActionListener
 		//Make the screen appear.
 		setVisible(true);
 		
+		
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Clash of Kings");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Dance with Dragons");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Feast for Crows");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Game of Thrones");
+		
 	}
 	
 	//Method to add files that you can tick off.
@@ -142,8 +162,10 @@ public class GUI extends JFrame implements ActionListener
 		cbMenuItem.setMnemonic(KeyEvent.VK_C);
 		submenu.add(cbMenuItem);
 		menu.add(submenu);
+		fileCount++;
 	}
 	
+	//Method to open JFileChooser which allows users to browse their system for files.
 	public void openFile(String directory, String FILENAME)
 	{
 		final JFileChooser fc = new JFileChooser();
@@ -155,10 +177,10 @@ public class GUI extends JFrame implements ActionListener
 
         if (returnVal == JFileChooser.APPROVE_OPTION) 
         {
+        	//Get the file name and file directory and assign them to variables.
             File file = fc.getSelectedFile();
             setDirectory(file.getAbsolutePath());
-            System.out.println(file.getAbsolutePath());
-            System.out.println(getDirectory());
+            files.add(getDirectory());
             
             //call method to add the new file to the list.
             FILENAME = file.getName();
@@ -166,20 +188,23 @@ public class GUI extends JFrame implements ActionListener
         } 
 	}
 	
-	public void searchFile(String directory)
+	public void searchFile()
 	{
-		TestFileIO Test = new TestFileIO();
-		System.out.println(getDirectory());
 		String input = textBox.getText();
 		input = input.toLowerCase();
-		try 
+		for(int i=0;i<files.size();i++)
 		{
-			Test.parseFile(getDirectory(), input);
-		} 
-		catch (FileNotFoundException e) 
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			try 
+			{
+				System.out.println(files.size());
+				System.out.println(files.get(i));
+				Test.parseFile(files.get(i), input);
+			} 
+			catch (FileNotFoundException e) 
+			{
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -218,6 +243,7 @@ public class GUI extends JFrame implements ActionListener
 			Desktop d = Desktop.getDesktop();
 			try 
 			{
+				//This will open a new window in the default browser on your system with a specified link.
 				d.browse(new URI("https://www.youtube.com/watch?v=C_Y6yrkj9Sg"));
 			} 
 			catch (IOException e) 
@@ -233,9 +259,14 @@ public class GUI extends JFrame implements ActionListener
 		}
 			
 		//Calls the searching methods to find certain text in a file(s).
-		if(arg0.getSource() == search)
+		if(arg0.getSource() == search || arg0.getSource() == textBox)
 		{
-			searchFile(getDirectory());
+			searchFile();
+		}
+		
+		if(arg0.getSource() == cbMenuItem)
+		{
+			
 		}
 	}
 
@@ -250,4 +281,6 @@ public String getDirectory() {
 public void setDirectory(String directory) {
 	this.directory = directory;
 }
+
+
 }

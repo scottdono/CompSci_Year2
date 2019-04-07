@@ -8,24 +8,64 @@ import java.util.Scanner;
 
 public class TestFileIO 
 {
+	//initialising the variables
+	private Scanner scan;
+	private int counter = 0;
+	private String line;
 	
+	public TestFileIO()
+	{
+		this.setScan(scan);
+		this.setCounter(counter);
+		this.setLine(line);
+	}
 	
 	public void parseFile(String FILENAME,String searchStr) throws FileNotFoundException
 	{
-		System.out.println(FILENAME);
-        Scanner scan = new Scanner(new File(FILENAME));
-        int counter = 0;
-        while(scan.hasNext())
+        setScan(new Scanner(new File(FILENAME)));
+        while(getScan().hasNext())
         {
-            String line = scan.nextLine().toLowerCase().toString();
-            if(line.contains(searchStr))
+            setLine(getScan().nextLine().toLowerCase().toString());
+            if(getLine().contains(searchStr))
             {
-            	counter++;
-                System.out.println(line+"\n");
+            	setCounter(getCounter() + 1);
+                //System.out.println(getLine()+"\n");
             }
         }
-        System.out.println("The string was found on "+counter+" lines.");
+        System.out.println("The string was found on "+getCounter()+" lines.");
+        //Reset the counter for the next search.
+        counter=0;
     }
+	
+	
+	
+	
+/**********************************************************
+ Getters/Setters
+**********************************************************/
+	public Scanner getScan() {
+		return scan;
+	}
+
+	public void setScan(Scanner scan) {
+		this.scan = scan;
+	}
+
+	public int getCounter() {
+		return counter;
+	}
+
+	public void setCounter(int counter) {
+		this.counter = counter;
+	}
+
+	public String getLine() {
+		return line;
+	}
+
+	public void setLine(String line) {
+		this.line = line;
+	}
 
 
 }
