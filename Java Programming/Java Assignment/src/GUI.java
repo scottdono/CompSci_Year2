@@ -23,6 +23,8 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 
@@ -34,26 +36,27 @@ public class GUI extends JFrame implements ActionListener
 	private JButton search;
 	private JLabel instruction;
 	private JTextField textBox;
+	private JLabel output;
 	private JMenu menu;
 	private JMenu help;
 	private JMenu exit;
 	private JMenu submenu;
 	private JMenuBar menuBar;
 	private JMenuItem open;
-	private JMenuItem save;
 	private JMenuItem about;
 	private JMenuItem link;
 	private JMenuItem end;
 	private JCheckBoxMenuItem cbMenuItem;
-	private JLabel output;
 	
-	private String results;
+	private String results = "<html>Results will be displayed here when you search.</html>";
 	private String directory;
 	private String FILENAME;
 	private int fileCount = 0;
+	private int i;
 	//Instantiating the file class
 	TestFileIO Test = new TestFileIO();
 	List<String> files = new ArrayList<String>();
+	List<String> names = new ArrayList<String>();
 	
 	
 	// Constructor method.
@@ -91,9 +94,6 @@ public class GUI extends JFrame implements ActionListener
 		open = new JMenuItem("Open...", new ImageIcon("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\GUI Icons\\open.png"));
 		open.getAccessibleContext().setAccessibleDescription("Opens the file chooser.");
 		menu.add(open);
-		save = new JMenuItem("Save...", new ImageIcon("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\GUI Icons\\save.png"));
-		save.getAccessibleContext().setAccessibleDescription("Save...");
-		menu.add(save);
 		about = new JMenuItem("About this program...", new ImageIcon("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\GUI Icons\\help.png"));
 		about.getAccessibleContext().setAccessibleDescription("Gives a set of instructions about the program.");
 		help.add(about);
@@ -124,13 +124,13 @@ public class GUI extends JFrame implements ActionListener
 		end.addActionListener(this);
 		about.addActionListener(this);
 		textBox.addActionListener(this);
-		cbMenuItem.addActionListener(this);
+		//cbMenuItem.addActionListener(this);
 		
 		//Add the label/button we created to the panel
-		mainPanel.add(instruction);
-		mainPanel.add(textBox);
-		mainPanel.add(search);
-		southPanel.add(output);
+		northPanel.add(instruction);
+		northPanel.add(textBox);
+		northPanel.add(search);
+		mainPanel.add(output);
 		
 		//Add the panel to the screen
 		add(mainPanel, BorderLayout.CENTER);
@@ -141,21 +141,27 @@ public class GUI extends JFrame implements ActionListener
 		setLocation(650,250);
 		
 		//Define the size of the window.
-		setSize(500,500);
+		setSize(600,500);
 		
 		//Make the screen appear.
 		setVisible(true);
 		
-		
-		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Clash of Kings");
-		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Dance with Dragons");
-		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Feast for Crows");
-		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Game of Thrones");
+		//Adding some default search files.
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Clash of Kings.txt");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Dance with Dragons.txt");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Feast for Crows.txt");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Game of Thrones.txt");
+		files.add("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\Library\\A Storm of Swords.txt");
+		newFiles("A Clash of Kings");
+		newFiles("A Dance with Dragons");
+		newFiles("A Feast of Crows");
+		newFiles("A Game of Thrones");
+		newFiles("A Storm of Swords");
 		
 	}
 	
 	//Method to add files that you can tick off.
-	public void newfiles(String FILENAME)
+	public void newFiles(String FILENAME)
 	{
 		//"true" sets the boxes to be checked by default.
 		cbMenuItem = new JCheckBoxMenuItem(FILENAME, true);
@@ -184,21 +190,30 @@ public class GUI extends JFrame implements ActionListener
             
             //call method to add the new file to the list.
             FILENAME = file.getName();
-            newfiles(FILENAME);
+            newFiles(FILENAME);
         } 
 	}
 	
 	public void searchFile()
 	{
-		String input = textBox.getText();
+		String input;
+		input = textBox.getText();
 		input = input.toLowerCase();
-		for(int i=0;i<files.size();i++)
+		results = "<html><font size=\"4\"><u>Here are your results:</u><br><br>";
+		for(i=0;i<files.size();i++)
 		{
 			try 
 			{
-				System.out.println(files.size());
-				System.out.println(files.get(i));
-				Test.parseFile(files.get(i), input);
+				//the length of the directory is 87 characters long.
+				if(input != null && !input.isEmpty())
+				{
+					results = results.concat(files.get(i).substring(87)+" | ").concat(Test.parseFile(files.get(i), input)).concat("<br><br>");
+				}
+				else
+				{
+					results = results.concat("Please enter a valid search string.");
+					i=files.size();
+				}
 			} 
 			catch (FileNotFoundException e) 
 			{
@@ -206,6 +221,8 @@ public class GUI extends JFrame implements ActionListener
 				e.printStackTrace();
 			}
 		}
+		results.concat("</font></html>");
+		output.setText(results);
 	}
 	
 /**********************************************************

@@ -20,7 +20,7 @@ public class TestFileIO
 		this.setLine(line);
 	}
 	
-	public void parseFile(String FILENAME,String searchStr) throws FileNotFoundException
+	public String parseFile(String FILENAME,String searchStr) throws FileNotFoundException
 	{
         setScan(new Scanner(new File(FILENAME)));
         while(getScan().hasNext())
@@ -32,9 +32,10 @@ public class TestFileIO
                 //System.out.println(getLine()+"\n");
             }
         }
-        System.out.println("The string was found on "+getCounter()+" lines.");
+        String test = "The string appears <b><u>"+getCounter()+"</b></u> times in this file.";
         //Reset the counter for the next search.
         counter=0;
+        return test;
     }
 	
 	
