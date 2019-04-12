@@ -3,7 +3,7 @@ import java.awt.Desktop;
 import java.awt.event.ActionEvent;
 import javax.swing.JFrame;
 import javax.swing.ImageIcon;
-import javax.swing.JCheckBoxMenuItem;
+//import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
@@ -12,7 +12,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.sun.glass.events.KeyEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -38,13 +37,13 @@ public class GUI extends JFrame implements ActionListener
 	private JMenu menu;
 	private JMenu help;
 	private JMenu exit;
-	private JMenuItem submenu;
+	private JMenuItem clear;
 	private JMenuBar menuBar;
 	private JMenuItem open;
 	private JMenuItem about;
 	private JMenuItem link;
 	private JMenuItem end;
-	private JCheckBoxMenuItem cbMenuItem;
+	//private JCheckBoxMenuItem cbMenuItem;
 	
 	private String results = "<html>Results will be displayed here when you search.</html>";
 	private String directory;
@@ -87,7 +86,6 @@ public class GUI extends JFrame implements ActionListener
 		exit.setMnemonic(KeyEvent.VK_A);
 		exit.getAccessibleContext().setAccessibleDescription("Exit the program.");
 		menuBar.add(exit);
-
 		open = new JMenuItem("Open...", new ImageIcon("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\GUI Icons\\open.png"));
 		open.getAccessibleContext().setAccessibleDescription("Opens the file chooser.");
 		menu.add(open);
@@ -100,10 +98,10 @@ public class GUI extends JFrame implements ActionListener
 		end = new JMenuItem("Terminate the program...", new ImageIcon("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\GUI Icons\\exit.png"));
 		end.getAccessibleContext().setAccessibleDescription("Terminates the program.");
 		exit.add(end);
-		
-		submenu = new JMenuItem("Files to include...");
-		submenu.setMnemonic(KeyEvent.VK_S);
-		menu.add(submenu);
+		clear = new JMenuItem("Clear loaded files...", new ImageIcon("C:\\Users\\Scott\\Documents\\GitHub\\CompSci_Year2\\Java Programming\\Java Assignment\\GUI Icons\\clear.png"));
+		clear.setMnemonic(KeyEvent.VK_S);
+		end.getAccessibleContext().setAccessibleDescription("Clears all the loaded files.");
+		menu.add(clear);
 		
 		this.setJMenuBar(menuBar);
 		
@@ -115,7 +113,7 @@ public class GUI extends JFrame implements ActionListener
 		JPanel mainPanel = new JPanel();
 		JPanel northPanel = new JPanel();
 		JPanel southPanel = new JPanel();
-		
+		//adding action listeners to various items in the GUI
 		search.addActionListener(this);
 		open.addActionListener(this);
 		link.addActionListener(this);
@@ -138,7 +136,7 @@ public class GUI extends JFrame implements ActionListener
 		setLocation(650,250);
 		
 		//Define the size of the window.
-		setSize(600,500);
+		setSize(700,500);
 		
 		//Make the screen appear.
 		setVisible(true);
@@ -154,17 +152,18 @@ public class GUI extends JFrame implements ActionListener
 		newFiles("A Feast of Crows");
 		newFiles("A Game of Thrones");
 		newFiles("A Storm of Swords");
-		
-		submenu.addActionListener(this);
+		//this has to be at the bottom because the item doesn't exist until the newFiles() method is called.
+		clear.addActionListener(this);
 		
 	}
 	
 	//Method to add files that you can tick off.
 	public void newFiles(String FILENAME)
 	{
+		//Originally the menu items were added to a clear.
 		//"true" sets the boxes to be checked by default.
-		cbMenuItem = new JCheckBoxMenuItem(FILENAME, true);
-		cbMenuItem.setMnemonic(KeyEvent.VK_C);
+		//cbMenuItem = new JCheckBoxMenuItem(FILENAME, true);
+		//cbMenuItem.setMnemonic(KeyEvent.VK_C);
 		names.add(FILENAME);
 	}
 	
@@ -172,6 +171,8 @@ public class GUI extends JFrame implements ActionListener
 	public void openFile(String directory, String FILENAME)
 	{
 		final JFileChooser fc = new JFileChooser();
+		//allows multiple file selection.
+		fc.setMultiSelectionEnabled(true);
 		//This adds a filter to the file chooser so that only text files can be selected.
 		FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
 		fc.setFileFilter(filter);
@@ -181,16 +182,20 @@ public class GUI extends JFrame implements ActionListener
         if (returnVal == JFileChooser.APPROVE_OPTION) 
         {
         	//Get the file name and file directory and assign them to variables.
-            File file = fc.getSelectedFile();
-            setDirectory(file.getAbsolutePath());
-            files.add(getDirectory());
-            
-            //call method to add the new file to the list.
-            FILENAME = file.getName();
-            newFiles(FILENAME);
+            File[] file = fc.getSelectedFiles();
+            for(i=0;i<file.length;i++)
+            {
+	            setDirectory(file[i].getAbsolutePath());
+	            files.add(getDirectory());
+	            
+	            //call method to add the new file to the list.
+	            FILENAME = file[i].getName();
+	            newFiles(FILENAME);
+            }
         } 
 	}
 	
+	//This method is called from within the action listener.
 	public void searchFile()
 	{
 		String input;
@@ -199,25 +204,19 @@ public class GUI extends JFrame implements ActionListener
 		results = "<html><font size=\"4\"><u>Here are your results:</u><br><br>";
 		for(i=0;i<files.size();i++)
 		{
-			try 
+			//if...else checks if the text box is empty or not
+			//the results variable starts with html tags and then information is concatenated to the string
+			if(input != null && !input.isEmpty())
 			{
-				//the length of the directory is 87 characters long.
-				if(input != null && !input.isEmpty())
-				{
-					results = results.concat(names.get(i)+" | ").concat(Test.parseFile(files.get(i), input)).concat("<br><br>");
-				}
-				else
-				{
-					results = results.concat("Please enter a valid search string.");
-					i=files.size();
-				}
-			} 
-			catch (FileNotFoundException e) 
+				results = results.concat(names.get(i)+" | ").concat(Test.parseFile(files.get(i), input)).concat("<br><br>");
+			}
+			else
 			{
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				results = results.concat("Please enter a valid search string.");
+				i=files.size();
 			}
 		}
+		//the end of the results variable then gets the rest of the closing tags and the Jlabel is updated.
 		results.concat("</font></html>");
 		output.setText(results);
 	}
@@ -278,7 +277,9 @@ public class GUI extends JFrame implements ActionListener
 			searchFile();
 		}
 		
-		if(arg0.getSource() == submenu)
+		//This allows the user to dump everything thats currently loaded. I originally wanted to allow users to pick and choose but
+		// couldn't figure out the proper functionality.w
+		if(arg0.getSource() == clear)
 		{
 			
 			JOptionPane.showConfirmDialog(null, "Would you like to remove the current search files?", "Are you sure?", JOptionPane.YES_OPTION);
