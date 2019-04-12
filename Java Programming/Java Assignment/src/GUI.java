@@ -23,8 +23,6 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 
@@ -40,7 +38,7 @@ public class GUI extends JFrame implements ActionListener
 	private JMenu menu;
 	private JMenu help;
 	private JMenu exit;
-	private JMenu submenu;
+	private JMenuItem submenu;
 	private JMenuBar menuBar;
 	private JMenuItem open;
 	private JMenuItem about;
@@ -51,7 +49,6 @@ public class GUI extends JFrame implements ActionListener
 	private String results = "<html>Results will be displayed here when you search.</html>";
 	private String directory;
 	private String FILENAME;
-	private int fileCount = 0;
 	private int i;
 	//Instantiating the file class
 	TestFileIO Test = new TestFileIO();
@@ -104,8 +101,9 @@ public class GUI extends JFrame implements ActionListener
 		end.getAccessibleContext().setAccessibleDescription("Terminates the program.");
 		exit.add(end);
 		
-		submenu = new JMenu("Files to include...");
+		submenu = new JMenuItem("Files to include...");
 		submenu.setMnemonic(KeyEvent.VK_S);
+		menu.add(submenu);
 		
 		this.setJMenuBar(menuBar);
 		
@@ -124,7 +122,6 @@ public class GUI extends JFrame implements ActionListener
 		end.addActionListener(this);
 		about.addActionListener(this);
 		textBox.addActionListener(this);
-		//cbMenuItem.addActionListener(this);
 		
 		//Add the label/button we created to the panel
 		northPanel.add(instruction);
@@ -158,6 +155,8 @@ public class GUI extends JFrame implements ActionListener
 		newFiles("A Game of Thrones");
 		newFiles("A Storm of Swords");
 		
+		submenu.addActionListener(this);
+		
 	}
 	
 	//Method to add files that you can tick off.
@@ -166,9 +165,7 @@ public class GUI extends JFrame implements ActionListener
 		//"true" sets the boxes to be checked by default.
 		cbMenuItem = new JCheckBoxMenuItem(FILENAME, true);
 		cbMenuItem.setMnemonic(KeyEvent.VK_C);
-		submenu.add(cbMenuItem);
-		menu.add(submenu);
-		fileCount++;
+		names.add(FILENAME);
 	}
 	
 	//Method to open JFileChooser which allows users to browse their system for files.
@@ -207,7 +204,7 @@ public class GUI extends JFrame implements ActionListener
 				//the length of the directory is 87 characters long.
 				if(input != null && !input.isEmpty())
 				{
-					results = results.concat(files.get(i).substring(87)+" | ").concat(Test.parseFile(files.get(i), input)).concat("<br><br>");
+					results = results.concat(names.get(i)+" | ").concat(Test.parseFile(files.get(i), input)).concat("<br><br>");
 				}
 				else
 				{
@@ -261,7 +258,7 @@ public class GUI extends JFrame implements ActionListener
 			try 
 			{
 				//This will open a new window in the default browser on your system with a specified link.
-				d.browse(new URI("https://www.youtube.com/watch?v=C_Y6yrkj9Sg"));
+				d.browse(new URI("https://youtu.be/0Wowb-SKB4g"));
 			} 
 			catch (IOException e) 
 			{
@@ -281,9 +278,15 @@ public class GUI extends JFrame implements ActionListener
 			searchFile();
 		}
 		
-		if(arg0.getSource() == cbMenuItem)
+		if(arg0.getSource() == submenu)
 		{
 			
+			JOptionPane.showConfirmDialog(null, "Would you like to remove the current search files?", "Are you sure?", JOptionPane.YES_OPTION);
+			for(i=0;i<files.size();i++)
+			{
+				files.removeAll(files);
+				names.removeAll(names);
+			}
 		}
 	}
 

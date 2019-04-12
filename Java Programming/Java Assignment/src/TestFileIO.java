@@ -32,10 +32,10 @@ public class TestFileIO
                 //System.out.println(getLine()+"\n");
             }
         }
-        String test = "The string appears <b><u>"+getCounter()+"</b></u> times in this file.";
+        String amount = "The string appears <b><u>"+getCounter()+"</b></u> times in this file.";
         //Reset the counter for the next search.
         counter=0;
-        return test;
+        return amount;
     }
 	
 	

@@ -21,9 +21,7 @@ public class Control
 
 	public static void main(String[] args) throws FileNotFoundException
 	{
-		
-		//System.out.println("ADDING FILES TO THE LIST");
-		GUI test = new GUI();
+		new GUI();
         
     }
 
